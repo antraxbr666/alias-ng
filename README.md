@@ -16,7 +16,6 @@ Browse, search, and select shell aliases interactively. Aliases are automaticall
 - 🔍 Fuzzy search through all shell aliases
 - 📂 Automatic grouping by category (Docker, Git, System, etc.)
 - 🎯 Filter by group: `ang docker`
-- 👁️ Preview pane with alias details
 - ⌨️ Inserts selected alias directly into the command line
 - 🔌 Zero configuration — works with your existing alias files
 
@@ -109,30 +108,90 @@ ANG_FZF_LAYOUT="reverse"
 
 ### Alias File Format
 
-The plugin parses standard zsh alias files. It detects:
+The plugin parses standard zsh alias files and expects the following structure:
 
-1. **Group headers** — comment-only lines that set the current group:
-   ```zsh
-   # Docker
-   alias dcud="docker compose up -d"  # Start containers in background
-   ```
+#### Group Headers
 
-2. **Descriptions** — inline comments after the alias definition:
-   ```zsh
-   alias ls='eza --color'  # List files with colors
-   ```
+Groups are defined by comment-only lines (lines that contain only a `#` followed by the group name). These lines tell the plugin that all aliases below belong to this group, until the next group header is found.
+
+```zsh
+# Docker
+alias dcud="docker compose up -d"  # Start containers in background
+alias dclf="docker compose logs -f"  # Follow logs
+```
+
+#### Alias Definitions
+
+Each alias follows the standard zsh syntax with an optional inline comment for the description:
+
+```zsh
+alias name='command'  # Description
+```
+
+- **Single-quoted values:** `alias ls='eza --color'  # List files`
+- **Double-quoted values:** `alias dcud="docker compose up -d"  # Start containers`
+- **Unquoted values:** `alias c=clear  # Clear terminal`
+
+#### Description
+
+The description is extracted from the inline comment (everything after `#` at the end of the line). If no comment is provided, the description column will be empty.
+
+#### Reference Section (Optional)
+
+You can add a reference summary at the top of your alias file for quick overview. Lines with colons (`:`) are automatically ignored by the parser:
+
+```zsh
+######################################################################
+# ALIASES REFERENCE
+# ─────────────────────────────────────────────────────────────────────
+# Sistema:     ls, la, l, cat, c, clean, vim
+# Docker:      dcud, dclf, dcd, dcr
+######################################################################
+
+# Sistema
+alias ls='eza --color'  # List files with colors
+...
+```
+
+#### Full Example
+
+```zsh
+######################################################################
+# ALIASES REFERENCE
+# ─────────────────────────────────────────────────────────────────────
+# Sistema:     ls, la, l, cat, c, clean
+# Git:         gencommit
+# Docker:      dcud, dclf, dcd, dcr
+######################################################################
+
+# Sistema
+alias ls='eza --color'                    # List files with colors
+alias la='eza --git --icons -lgha'        # Detailed list + git status
+alias c='clear'                           # Clear terminal
+
+# Git
+alias gencommit='git diff | sgpt "..."'   # Generate commit via AI
+
+# Docker
+alias dcud="docker compose up -d"         # Start containers in background
+alias dclf="docker compose logs -f"       # Follow logs
+alias dcd="docker compose down"           # Stop containers
+alias dcr="docker compose restart"        # Restart containers
+```
 
 ### Parsing Rules
 
-- ✅ Comment-only lines (`# Group Name`) set the active group
-- ✅ Separator lines (`# ===`, `# ---`) are ignored
-- ✅ Reference summaries with colons (`# Sistema: ls, la`) are ignored
-- ✅ Descriptions are extracted from `# comment` at the end of alias lines
-- ✅ Single and double quoted values are supported
+| Rule                         | Behavior                        |
+| ---------------------------- | ------------------------------- |
+| `# Group Name`               | Sets the active group           |
+| `# ===` / `# ---`            | Ignored (separator lines)       |
+| `# Key: value`               | Ignored (reference summaries)   |
+| `alias name='cmd'  # Desc`   | Extracts alias + description    |
+| `alias name='cmd'`           | Extracts alias (no description) |
 
 ### Display Format
 
-Aliases are displayed in fzf with four columns:
+Aliases are displayed in fzf with three columns:
 
 ```
 GROUP    │ ALIAS      │ COMMAND                          │ DESCRIPTION
