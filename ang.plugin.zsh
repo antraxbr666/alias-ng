@@ -19,7 +19,7 @@
 # ============================================================================
 # Version
 # ============================================================================
-ANG_VERSION="0.3.2"
+ANG_VERSION="0.3.3"
 
 # ============================================================================
 # Configuration
@@ -137,7 +137,7 @@ ang() {
             [[ "${group:l}" != *"${filter:l}"* ]] && continue
         fi
 
-        fzf_input+="$(printf "${c_mauve}%-10s${reset} ${c_overlay}│${reset} ${c_blue}%-12s${reset} ${c_overlay}│${reset} ${c_green}%-25.25s${reset} ${c_overlay}│${reset} ${c_subtext}%s${reset}" "$group" "$name" "$value" "$desc")"$'\n'
+        fzf_input+="$(printf "${c_mauve}%-10s${reset} ${c_overlay}│${reset} ${c_blue}%-12s${reset} ${c_overlay}│${reset} ${c_green}%-25.25s${reset} ${c_overlay}│${reset} ${c_yellow}%s${reset}" "$group" "$name" "$value" "$desc")"$'\n'
     done
 
     if [[ -z "$fzf_input" ]]; then
@@ -158,7 +158,7 @@ ang() {
         --color="bg:#1e1e2e,fg:#cdd6f4,hl:#f38ba8,hl+:#f5c2e7" \
         --color="info:#cba6f7,marker:#a6e3a1,pointer:#89b4fa,prompt:#cba6f7" \
         --color="border:#6c7086,label:#cba6f7,query:#cdd6f4" \
-        --header="$(printf '\033[38;2;203;166;247m%-10s\033[0m \033[38;2;108;112;134m│\033[0m \033[38;2;137;180;250m%-12s\033[0m \033[38;2;108;112;134m│\033[0m \033[38;2;166;227;161m%-25.25s\033[0m \033[38;2;108;112;134m│\033[0m \033[38;2;186;194;222m%s\033[0m' 'GROUP' 'ALIAS' 'COMMAND' 'DESCRIPTION')" \
+        --header="$(printf '\033[38;2;203;166;247m%-10s\033[0m \033[38;2;108;112;134m│\033[0m \033[38;2;137;180;250m%-12s\033[0m \033[38;2;108;112;134m│\033[0m \033[38;2;166;227;161m%-25.25s\033[0m \033[38;2;108;112;134m│\033[0m \033[38;2;249;226;175m%s\033[0m' 'GROUP' 'ALIAS' 'COMMAND' 'DESCRIPTION')" \
         --prompt="ang> " \
         --pointer="▶" \
         --marker="✓")
