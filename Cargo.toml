@@ -1,0 +1,23 @@
+[package]
+name = "ang"
+version = "0.1.0"
+edition = "2021"
+authors = ["antrax <antraxbr666>"]
+description = "Alias Next Generation - A modern alias browser"
+license = "MIT"
+repository = "https://github.com/antraxbr666/alias-ng"
+
+[dependencies]
+rich_rust = "0.2"
+clap = { version = "4", features = ["derive"] }
+anyhow = "1"
+ratatui = "0.29"
+crossterm = "0.28"
+fuzzy-matcher = "0.3"
+dirs = "5"
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+strip = true
