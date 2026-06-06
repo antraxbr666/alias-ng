@@ -12,7 +12,7 @@ Browse, search, and select shell aliases interactively. Aliases are automaticall
 ## ✨ Features
 
 - 🔍 Fuzzy search through all shell aliases
-- 📂 Automatic grouping by category (Docker, Git, Sistema, etc.)
+- 📂 Automatic grouping by category (Docker, Git, System, etc.)
 - 🎯 Filter by group: `ang docker`
 - 👁️ Preview pane with alias details
 - ⌨️ Inserts selected alias directly into the command line
@@ -54,7 +54,7 @@ source /path/to/alias-ng/ang.plugin.zsh
 ang              # Browse all aliases
 ang docker       # Browse Docker aliases only
 ang git          # Browse Git aliases only
-ang sistema      # Browse system aliases only
+ang system       # Browse system aliases only
 ang --version    # Show version
 ```
 
@@ -112,12 +112,12 @@ The plugin parses standard zsh alias files. It detects:
 1. **Group headers** — comment-only lines that set the current group:
    ```zsh
    # Docker
-   alias dcud="docker compose up -d"  # Sobe containers em background
+   alias dcud="docker compose up -d"  # Start containers in background
    ```
 
 2. **Descriptions** — inline comments after the alias definition:
    ```zsh
-   alias ls='eza --color'  # Lista arquivos com cores
+   alias ls='eza --color'  # List files with colors
    ```
 
 ### Parsing Rules
@@ -135,10 +135,10 @@ Aliases are displayed in fzf with four columns:
 ```
 GROUP    │ ALIAS      │ COMMAND                          │ DESCRIPTION
 ─────────┼────────────┼──────────────────────────────────┼─────────────
-docker   │ dcud       │ docker compose up -d             │ Sobe containers
-docker   │ dclf       │ docker compose logs -f           │ Acompanha logs
-git      │ gencommit  │ git diff | sgpt "Generate..."    │ Gera commit
-sistema  │ la         │ eza --git --icons -lgha          │ Lista detalhada
+docker   │ dcud       │ docker compose up -d             │ Start containers
+docker   │ dclf       │ docker compose logs -f           │ Follow logs
+git      │ gencommit  │ git diff | sgpt "Generate..."    │ Generate commit
+system   │ la         │ eza --git --icons -lgha          │ Detailed list
 ```
 
 ---
