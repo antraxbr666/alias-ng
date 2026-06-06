@@ -1,9 +1,11 @@
-# ⚡ Alias Next Generation (ang)
+<h1 align="center">⚡ Alias Next Generation - ang</h1>
 
-![Version](https://img.shields.io/github/v/tag/antraxbr666/alias-ng?label=version&color=blue)
-![License](https://img.shields.io/github/license/antraxbr666/alias-ng)
+<p align="center">
+  <img src="https://img.shields.io/github/v/tag/antraxbr666/alias-ng?label=version&color=blue" alt="Version">
+  <img src="https://img.shields.io/github/license/antraxbr666/alias-ng" alt="License">
+</p>
 
-> A modern alias browser for zsh powered by fzf.
+<p align="center">A modern alias browser for zsh powered by fzf.</p>
 
 Browse, search, and select shell aliases interactively. Aliases are automatically organized by groups with descriptions extracted from inline comments.
 
