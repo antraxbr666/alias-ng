@@ -2,7 +2,7 @@
 
 <p align="center">
   <img src="https://img.shields.io/github/v/tag/antraxbr666/alias-ng?label=version&color=blue" alt="Version">
-  <img src="https://img.shields.io/github/license/antraxbr666/alias-ng" alt="License">
+  <img src="https://img.shields.io/github/license/antraxbr666/alias-ng?cache=0" alt="License">
 </p>
 
 <p align="center">A modern alias browser for zsh powered by fzf.</p>
