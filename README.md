@@ -1,5 +1,8 @@
 # ⚡ Alias Next Generation (ang)
 
+![Version](https://img.shields.io/github/v/tag/antraxbr666/alias-ng?label=version&color=blue)
+![License](https://img.shields.io/github/license/antraxbr666/alias-ng)
+
 > A modern alias browser for zsh powered by fzf.
 
 Browse, search, and select shell aliases interactively. Aliases are automatically organized by groups with descriptions extracted from inline comments.
@@ -52,6 +55,7 @@ ang              # Browse all aliases
 ang docker       # Browse Docker aliases only
 ang git          # Browse Git aliases only
 ang sistema      # Browse system aliases only
+ang --version    # Show version
 ```
 
 ### ⌨️ fzf Keybindings
