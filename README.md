@@ -1,30 +1,34 @@
-# Alias Next Generation (ang)
+# ⚡ Alias Next Generation (ang)
 
-A modern alias browser for zsh powered by fzf.
+> A modern alias browser for zsh powered by fzf.
 
 Browse, search, and select shell aliases interactively. Aliases are automatically organized by groups with descriptions extracted from inline comments.
 
-## Features
+---
 
-- Fuzzy search through all shell aliases
-- Automatic grouping by category (Docker, Git, Sistema, etc.)
-- Filter by group: `ang docker`
-- Preview pane with alias details
-- Inserts selected alias directly into the command line
-- Zero configuration — works with your existing alias files
+## ✨ Features
 
-## Installation
+- 🔍 Fuzzy search through all shell aliases
+- 📂 Automatic grouping by category (Docker, Git, Sistema, etc.)
+- 🎯 Filter by group: `ang docker`
+- 👁️ Preview pane with alias details
+- ⌨️ Inserts selected alias directly into the command line
+- 🔌 Zero configuration — works with your existing alias files
+
+---
+
+## 📦 Installation
 
 ### zinit
 
 ```zsh
-zinit light antrax/alias-ng
+zinit light antraxbr666/alias-ng
 ```
 
 ### Oh-My-Zsh
 
 ```zsh
-git clone https://github.com/antrax/alias-ng.git ~/.oh-my-zsh/custom/plugins/alias-ng
+git clone https://github.com/antraxbr666/alias-ng.git ~/.oh-my-zsh/custom/plugins/alias-ng
 ```
 
 Add `alias-ng` to the `plugins` array in `.zshrc`:
@@ -39,7 +43,9 @@ plugins=(... alias-ng)
 source /path/to/alias-ng/ang.plugin.zsh
 ```
 
-## Usage
+---
+
+## 🚀 Usage
 
 ```zsh
 ang              # Browse all aliases
@@ -48,16 +54,18 @@ ang git          # Browse Git aliases only
 ang sistema      # Browse system aliases only
 ```
 
-### fzf Keybindings
+### ⌨️ fzf Keybindings
 
-| Key     | Action                          |
-|---------|---------------------------------|
-| `↑`/`↓` | Navigate                        |
-| `Enter` | Select and insert alias         |
-| `Esc`   | Cancel                          |
-| Type    | Fuzzy filter                    |
+| Key      | Action                  |
+| -------- | ----------------------- |
+| `↑` / `↓` | Navigate                |
+| `Enter`  | Select and insert alias |
+| `Esc`    | Cancel                  |
+| Type     | Fuzzy filter            |
 
-## Configuration
+---
+
+## ⚙️ Configuration
 
 ### `ANG_ALIAS_FILES`
 
@@ -89,7 +97,9 @@ ANG_FZF_LAYOUT="reverse"
 
 **Default:** `reverse`
 
-## How It Works
+---
+
+## 🔧 How It Works
 
 ### Alias File Format
 
@@ -108,11 +118,11 @@ The plugin parses standard zsh alias files. It detects:
 
 ### Parsing Rules
 
-- Comment-only lines (`# Group Name`) set the active group
-- Separator lines (`# ===`, `# ---`) are ignored
-- Reference summaries with colons (`# Sistema: ls, la`) are ignored
-- Descriptions are extracted from `# comment` at the end of alias lines
-- Single and double quoted values are supported
+- ✅ Comment-only lines (`# Group Name`) set the active group
+- ✅ Separator lines (`# ===`, `# ---`) are ignored
+- ✅ Reference summaries with colons (`# Sistema: ls, la`) are ignored
+- ✅ Descriptions are extracted from `# comment` at the end of alias lines
+- ✅ Single and double quoted values are supported
 
 ### Display Format
 
@@ -127,11 +137,21 @@ git      │ gencommit  │ git diff | sgpt "Generate..."    │ Gera commit
 sistema  │ la         │ eza --git --icons -lgha          │ Lista detalhada
 ```
 
-## Requirements
+---
 
-- zsh
-- fzf
+## 📋 Requirements
 
-## License
+- 🐚 zsh
+- 🔍 fzf
+
+---
+
+## 📄 License
 
 MIT
+
+---
+
+<p align="center">
+  Made with ❤️ by <a href="https://github.com/antraxbr666">antrax</a>
+</p>
