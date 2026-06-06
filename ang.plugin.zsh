@@ -19,7 +19,7 @@
 # ============================================================================
 # Version
 # ============================================================================
-ANG_VERSION="0.3.0"
+ANG_VERSION="0.3.1"
 
 # ============================================================================
 # Configuration
@@ -144,20 +144,18 @@ ang() {
         return 1
     fi
 
-    # Launch fzf with colors (override FZF_DEFAULT_OPTS to disable preview pane)
+    # Launch fzf (--no-preview disables preview from FZF_DEFAULT_OPTS)
     local selected
-    selected=$(echo -e "$fzf_input" | FZF_DEFAULT_OPTS="" fzf \
+    selected=$(echo -e "$fzf_input" | fzf \
         --ansi \
+        --no-preview \
         --height="$ANG_FZF_HEIGHT" \
         --layout="$ANG_FZF_LAYOUT" \
         --border \
         --border-label=" ang $ANG_VERSION " \
         --border-label-pos=3 \
-        --color="border:#5e81ac,header:bold:#88c0d0,label:bold:#a3be8c,prompt:#b48ead,pointer:#bf616a" \
         --header="$(printf '\033[1m%-10s │ %-12s │ %-25.25s │ %s\033[0m' 'GROUP' 'ALIAS' 'COMMAND' 'DESCRIPTION')" \
-        --prompt="ang> " \
-        --pointer="▶" \
-        --marker="✓")
+        --prompt="ang> ")
 
     # Insert selected alias into command line
     if [[ -n "$selected" ]]; then
