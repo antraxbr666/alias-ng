@@ -122,7 +122,7 @@ ang() {
             [[ "${group:l}" != *"${filter:l}"* ]] && continue
         fi
 
-        fzf_input+="$(printf '%-10s │ %-12s │ %-35s │ %s' "$group" "$name" "$value" "$desc")"$'\n'
+        fzf_input+="$(printf '%-10s │ %-12s │ %-25.25s │ %s' "$group" "$name" "$value" "$desc")"$'\n'
     done
 
     if [[ -z "$fzf_input" ]]; then
@@ -130,13 +130,13 @@ ang() {
         return 1
     fi
 
-    # Launch fzf
+    # Launch fzf (override FZF_DEFAULT_OPTS to disable preview pane)
     local selected
-    selected=$(echo -e "$fzf_input" | fzf \
+    selected=$(echo -e "$fzf_input" | FZF_DEFAULT_OPTS="" fzf \
         --height="$ANG_FZF_HEIGHT" \
         --layout="$ANG_FZF_LAYOUT" \
         --border \
-        --header="$(printf '%-10s │ %-12s │ %-35s │ %s' 'GROUP' 'ALIAS' 'COMMAND' 'DESCRIPTION')" \
+        --header="$(printf '%-10s │ %-12s │ %-25.25s │ %s' 'GROUP' 'ALIAS' 'COMMAND' 'DESCRIPTION')" \
         --prompt="ang> ")
 
     # Insert selected alias into command line
