@@ -19,7 +19,7 @@
 # ============================================================================
 # Version
 # ============================================================================
-ANG_VERSION="0.3.1"
+ANG_VERSION="0.3.2"
 
 # ============================================================================
 # Configuration
@@ -112,20 +112,22 @@ ang() {
         return 1
     fi
 
-    # Color mapping for groups
-    local -A group_colors=(
-        [docker]="\033[1;34m"    # Bold Blue
-        [git]="\033[1;33m"       # Bold Yellow
-        [rust]="\033[1;31m"      # Bold Red
-        [python]="\033[1;35m"    # Bold Magenta
-        [neovim]="\033[1;32m"    # Bold Green
-        [sistema]="\033[1;36m"   # Bold Cyan
-        [android]="\033[1;33m"   # Bold Yellow
-        [rede]="\033[1;37m"      # Bold White
-    )
+    # Catppuccin Mocha colors
+    local c_mauve="\033[38;2;203;166;247m"
+    local c_blue="\033[38;2;137;180;250m"
+    local c_green="\033[38;2;166;227;161m"
+    local c_subtext="\033[38;2;186;194;222m"
+    local c_overlay="\033[38;2;108;112;134m"
+    local c_text="\033[38;2;205;214;244m"
+    local c_yellow="\033[38;2;249;226;175m"
+    local c_red="\033[38;2;243;139;168m"
+    local c_peach="\033[38;2;250;179;135m"
+    local c_teal="\033[38;2;148;226;213m"
+    local c_pink="\033[38;2;245;194;231m"
+    local c_sky="\033[38;2;137;220;235m"
     local reset="\033[0m"
 
-    # Build formatted display with colors
+    # Build formatted display with Catppuccin colors
     for entry in "${entries[@]}"; do
         [[ -z "$entry" ]] && continue
         local group name value desc
@@ -135,8 +137,7 @@ ang() {
             [[ "${group:l}" != *"${filter:l}"* ]] && continue
         fi
 
-        local color="${group_colors[${group:l}]:-\033[1;37m}"
-        fzf_input+="$(printf "${color}%-10s${reset} │ %-12s │ %-25.25s │ %s" "$group" "$name" "$value" "$desc")"$'\n'
+        fzf_input+="$(printf "${c_mauve}%-10s${reset} ${c_overlay}│${reset} ${c_blue}%-12s${reset} ${c_overlay}│${reset} ${c_green}%-25.25s${reset} ${c_overlay}│${reset} ${c_subtext}%s${reset}" "$group" "$name" "$value" "$desc")"$'\n'
     done
 
     if [[ -z "$fzf_input" ]]; then
@@ -144,7 +145,7 @@ ang() {
         return 1
     fi
 
-    # Launch fzf (--no-preview disables preview from FZF_DEFAULT_OPTS)
+    # Launch fzf with Catppuccin Mocha theme (--no-preview disables preview from FZF_DEFAULT_OPTS)
     local selected
     selected=$(echo -e "$fzf_input" | fzf \
         --ansi \
@@ -154,8 +155,13 @@ ang() {
         --border \
         --border-label=" ang $ANG_VERSION " \
         --border-label-pos=3 \
-        --header="$(printf '\033[1m%-10s │ %-12s │ %-25.25s │ %s\033[0m' 'GROUP' 'ALIAS' 'COMMAND' 'DESCRIPTION')" \
-        --prompt="ang> ")
+        --color="bg:#1e1e2e,fg:#cdd6f4,hl:#f38ba8,hl+:#f5c2e7" \
+        --color="info:#cba6f7,marker:#a6e3a1,pointer:#89b4fa,prompt:#cba6f7" \
+        --color="border:#6c7086,label:#cba6f7,query:#cdd6f4" \
+        --header="$(printf '\033[38;2;203;166;247m%-10s\033[0m \033[38;2;108;112;134m│\033[0m \033[38;2;137;180;250m%-12s\033[0m \033[38;2;108;112;134m│\033[0m \033[38;2;166;227;161m%-25.25s\033[0m \033[38;2;108;112;134m│\033[0m \033[38;2;186;194;222m%s\033[0m' 'GROUP' 'ALIAS' 'COMMAND' 'DESCRIPTION')" \
+        --prompt="ang> " \
+        --pointer="▶" \
+        --marker="✓")
 
     # Insert selected alias into command line
     if [[ -n "$selected" ]]; then
