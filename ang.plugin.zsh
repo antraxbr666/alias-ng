@@ -19,7 +19,7 @@
 # ============================================================================
 # Version
 # ============================================================================
-ANG_VERSION="0.2.0"
+ANG_VERSION="0.3.0"
 
 # ============================================================================
 # Configuration
@@ -112,7 +112,20 @@ ang() {
         return 1
     fi
 
-    # Build formatted display
+    # Color mapping for groups
+    local -A group_colors=(
+        [docker]="\033[1;34m"    # Bold Blue
+        [git]="\033[1;33m"       # Bold Yellow
+        [rust]="\033[1;31m"      # Bold Red
+        [python]="\033[1;35m"    # Bold Magenta
+        [neovim]="\033[1;32m"    # Bold Green
+        [sistema]="\033[1;36m"   # Bold Cyan
+        [android]="\033[1;33m"   # Bold Yellow
+        [rede]="\033[1;37m"      # Bold White
+    )
+    local reset="\033[0m"
+
+    # Build formatted display with colors
     for entry in "${entries[@]}"; do
         [[ -z "$entry" ]] && continue
         local group name value desc
@@ -122,7 +135,8 @@ ang() {
             [[ "${group:l}" != *"${filter:l}"* ]] && continue
         fi
 
-        fzf_input+="$(printf '%-10s │ %-12s │ %-25.25s │ %s' "$group" "$name" "$value" "$desc")"$'\n'
+        local color="${group_colors[${group:l}]:-\033[1;37m}"
+        fzf_input+="$(printf "${color}%-10s${reset} │ %-12s │ %-25.25s │ %s" "$group" "$name" "$value" "$desc")"$'\n'
     done
 
     if [[ -z "$fzf_input" ]]; then
@@ -130,14 +144,20 @@ ang() {
         return 1
     fi
 
-    # Launch fzf (override FZF_DEFAULT_OPTS to disable preview pane)
+    # Launch fzf with colors (override FZF_DEFAULT_OPTS to disable preview pane)
     local selected
     selected=$(echo -e "$fzf_input" | FZF_DEFAULT_OPTS="" fzf \
+        --ansi \
         --height="$ANG_FZF_HEIGHT" \
         --layout="$ANG_FZF_LAYOUT" \
         --border \
-        --header="$(printf '%-10s │ %-12s │ %-25.25s │ %s' 'GROUP' 'ALIAS' 'COMMAND' 'DESCRIPTION')" \
-        --prompt="ang> ")
+        --border-label=" ang $ANG_VERSION " \
+        --border-label-pos=3 \
+        --color="border:#5e81ac,header:bold:#88c0d0,label:bold:#a3be8c,prompt:#b48ead,pointer:#bf616a" \
+        --header="$(printf '\033[1m%-10s │ %-12s │ %-25.25s │ %s\033[0m' 'GROUP' 'ALIAS' 'COMMAND' 'DESCRIPTION')" \
+        --prompt="ang> " \
+        --pointer="▶" \
+        --marker="✓")
 
     # Insert selected alias into command line
     if [[ -n "$selected" ]]; then
