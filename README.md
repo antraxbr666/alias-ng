@@ -1,7 +1,7 @@
 <h1 align="center">⚡ Alias Next Generation — ang</h1>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/version-0.6.4-blue" alt="Version">
+  <img src="https://img.shields.io/badge/version-0.6.5-blue" alt="Version">
   <img src="https://img.shields.io/badge/license-MIT-green" alt="License">
   <img src="https://img.shields.io/badge/rust-1.71+-orange?logo=rust" alt="Rust">
   <img src="https://img.shields.io/badge/crates-deps-blue?logo=rust" alt="Crates">
@@ -67,16 +67,14 @@ cargo build --release
 sudo cp target/release/ang /usr/local/bin/
 ```
 
-### Clipboard dependencies
+### Clipboard
 
-ang uses native clipboard tools to copy aliases. Install the one for your display server:
+ang uses **OSC 52** escape sequence to copy aliases to clipboard. This works:
+- Locally (X11, Wayland)
+- Over SSH
+- In any terminal that supports OSC 52 (Kitty, iTerm2, Alacritty, WezTerm, foot, etc.)
 
-| Display Server | Detection               | Package                               | Install Command                                 |
-| -------------- | ----------------------- | ------------------------------------- | ----------------------------------------------- |
-| **Wayland**      | `$WAYLAND_DISPLAY` set  | `wl-clipboard` (provides `wl-copy`)       | `sudo pacman -S wl-clipboard` (Arch)            |
-| **X11**          | fallback (no Wayland)   | `xclip` or `xsel`                       | `sudo pacman -S xclip` (Arch)                   |
-
-ang checks for these dependencies on startup and shows an error if none are found.
+No external dependencies needed (no xclip, wl-copy, xsel).
 
 ---
 
@@ -232,7 +230,6 @@ alias dcr="docker compose restart"        # Restart containers
 
 - 🐚 zsh (required for runtime alias collection)
 - 🔧 Rust toolchain (to build from source)
-- 📋 Clipboard tool: `wl-clipboard` (Wayland) or `xclip`/`xsel` (X11)
 
 ---
 

@@ -101,11 +101,6 @@ fn main() -> Result<()> {
         return Ok(());
     }
 
-    if let Err(e) = clipboard::check_dependencies() {
-        eprintln!("ang: clipboard error: {}", e);
-        std::process::exit(1);
-    }
-
     let mut aliases = collector::RuntimeCollector::collect()?;
 
     let files = discovery::FileDiscovery::discover();
