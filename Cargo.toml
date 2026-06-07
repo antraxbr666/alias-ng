@@ -15,6 +15,7 @@ crossterm = "0.28"
 dirs = "5"
 glob = "0.3"
 shellexpand = "3"
+make_colors = "1.0.2"
 
 [profile.release]
 opt-level = 3

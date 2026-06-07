@@ -8,13 +8,13 @@ mod ui;
 
 use anyhow::Result;
 use app::{App, AppMode};
-use clap::builder::styling;
 use clap::Parser;
 use crossterm::{
     event::{self, Event, KeyCode, KeyModifiers},
     terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
     ExecutableCommand,
 };
+use make_colors::make_colors_hex;
 use ratatui::prelude::*;
 use std::io::stdout;
 use std::path::PathBuf;
@@ -23,22 +23,62 @@ use ui::{draw, draw_notification};
 
 const VERSION: &str = env!("CARGO_PKG_VERSION");
 
-fn get_styles() -> clap::builder::Styles {
-    styling::Styles::styled()
-        .header(styling::AnsiColor::BrightMagenta.on_default().bold())
-        .usage(styling::AnsiColor::BrightMagenta.on_default().bold())
-        .literal(styling::AnsiColor::BrightGreen.on_default())
-        .placeholder(styling::AnsiColor::BrightYellow.on_default())
-        .error(styling::AnsiColor::BrightRed.on_default().bold())
-        .valid(styling::AnsiColor::BrightGreen.on_default())
-        .invalid(styling::AnsiColor::BrightRed.on_default())
+fn hex(text: &str, color: &str) -> String {
+    make_colors_hex(text, color, None).unwrap_or_else(|_| text.to_string())
+}
+
+fn print_help() {
+    println!();
+    println!(
+        "{} {} {} {}",
+        hex("Alias Next Generation", "#f9e2af"),
+        hex("v", "#f38ba8"),
+        hex(VERSION, "#a6e3a1"),
+        hex("— A modern alias browser", "#94e2d5"),
+    );
+    println!();
+    println!("{}", hex("Usage:", "#f9e2af"));
+    println!("  ang [OPTIONS] [GROUP]");
+    println!();
+    println!("{}", hex("Arguments:", "#f9e2af"));
+    println!("  [GROUP]  {}", hex("Filter by group name", "#94e2d5"));
+    println!();
+    println!("{}", hex("Options:", "#f9e2af"));
+    println!(
+        "  {}, --file <FILE>  {}",
+        hex("-f", "#a6e3a1"),
+        hex("Alias file to scan", "#94e2d5"),
+    );
+    println!(
+        "  {}               {}",
+        hex("--print", "#a6e3a1"),
+        hex("Print all aliases as TSV", "#94e2d5"),
+    );
+    println!(
+        "  {}, --help         {}",
+        hex("-h", "#a6e3a1"),
+        hex("Print help", "#94e2d5"),
+    );
+    println!(
+        "  {}, --version      {}",
+        hex("-V", "#a6e3a1"),
+        hex("Print version", "#94e2d5"),
+    );
+    println!();
+}
+
+fn print_version() {
+    println!(
+        "{} {}",
+        hex("ang", "#f9e2af"),
+        hex(VERSION, "#a6e3a1"),
+    );
 }
 
 #[derive(Parser, Debug)]
 #[command(name = "ang")]
-#[command(about = format!("Alias Next Generation {} — A modern alias browser", VERSION))]
 #[command(version = VERSION)]
-#[command(styles = get_styles())]
+#[command(disable_help_flag = true)]
 struct Cli {
     #[arg(value_name = "GROUP")]
     group: Option<String>,
@@ -48,10 +88,38 @@ struct Cli {
 
     #[arg(long)]
     print: bool,
+
+    #[arg(short, long, action = clap::ArgAction::SetTrue)]
+    help: bool,
+
+    #[arg(short = 'V', long, action = clap::ArgAction::SetTrue)]
+    version: bool,
 }
 
 fn main() -> Result<()> {
+    let args: Vec<String> = std::env::args().collect();
+
+    if args.contains(&"--help".to_string()) || args.contains(&"-h".to_string()) {
+        print_help();
+        return Ok(());
+    }
+
+    if args.contains(&"--version".to_string()) || args.contains(&"-V".to_string()) {
+        print_version();
+        return Ok(());
+    }
+
     let cli = Cli::parse();
+
+    if cli.help {
+        print_help();
+        return Ok(());
+    }
+
+    if cli.version {
+        print_version();
+        return Ok(());
+    }
 
     if let Err(e) = clipboard::check_dependencies() {
         eprintln!("ang: clipboard error: {}", e);
