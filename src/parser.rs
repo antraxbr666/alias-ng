@@ -1,6 +1,3 @@
-use std::fs;
-use std::path::Path;
-
 /// Represents a parsed alias entry
 #[derive(Debug, Clone)]
 pub struct Alias {
@@ -14,11 +11,6 @@ pub struct Alias {
 pub struct Parser;
 
 impl Parser {
-    pub fn parse_file<P: AsRef<Path>>(path: P) -> anyhow::Result<Vec<Alias>> {
-        let content = fs::read_to_string(path)?;
-        Ok(Self::parse_content(&content))
-    }
-
     pub fn parse_content(content: &str) -> Vec<Alias> {
         let mut aliases = Vec::new();
         let mut current_group = "other".to_string();

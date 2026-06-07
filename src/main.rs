@@ -17,7 +17,6 @@ use crossterm::{
 use make_colors::make_colors_hex;
 use ratatui::prelude::*;
 use std::io::stdout;
-use std::path::PathBuf;
 use std::time::Duration;
 use ui::{draw, draw_notification};
 
@@ -30,30 +29,17 @@ fn hex(text: &str, color: &str) -> String {
 fn print_help() {
     println!();
     println!(
-        "{} {} {} {}",
-        hex("Alias Next Generation", "#f9e2af"),
-        hex("v", "#f38ba8"),
-        hex(VERSION, "#a6e3a1"),
-        hex("— A modern alias browser", "#94e2d5"),
+        "{}",
+        hex(&format!("Alias Next Generation v{} — A modern alias browser", VERSION), "#f9e2af"),
     );
     println!();
     println!("{}", hex("Usage:", "#f9e2af"));
-    println!("  ang [OPTIONS] [GROUP]");
+    println!("  ang [GROUP]");
     println!();
     println!("{}", hex("Arguments:", "#f9e2af"));
     println!("  [GROUP]  {}", hex("Filter by group name", "#94e2d5"));
     println!();
     println!("{}", hex("Options:", "#f9e2af"));
-    println!(
-        "  {}, --file <FILE>  {}",
-        hex("-f", "#a6e3a1"),
-        hex("Alias file to scan", "#94e2d5"),
-    );
-    println!(
-        "  {}               {}",
-        hex("--print", "#a6e3a1"),
-        hex("Print all aliases as TSV", "#94e2d5"),
-    );
     println!(
         "  {}, --help         {}",
         hex("-h", "#a6e3a1"),
@@ -82,12 +68,6 @@ fn print_version() {
 struct Cli {
     #[arg(value_name = "GROUP")]
     group: Option<String>,
-
-    #[arg(short, long, value_name = "FILE")]
-    file: Option<PathBuf>,
-
-    #[arg(long)]
-    print: bool,
 
     #[arg(short, long, action = clap::ArgAction::SetTrue)]
     help: bool,
@@ -126,28 +106,20 @@ fn main() -> Result<()> {
         std::process::exit(1);
     }
 
-    let aliases = if let Some(ref file) = cli.file {
-        parser::Parser::parse_file(file)?
-    } else {
-        let mut aliases = collector::RuntimeCollector::collect()?;
+    let mut aliases = collector::RuntimeCollector::collect()?;
 
-        let files = discovery::FileDiscovery::discover();
-        enricher::MetadataEnricher::enrich(&mut aliases, &files);
+    let files = discovery::FileDiscovery::discover();
+    enricher::MetadataEnricher::enrich(&mut aliases, &files);
 
-        aliases.sort_by(|a, b| {
-            let group_cmp = a.group.to_lowercase().cmp(&b.group.to_lowercase());
-            if group_cmp == std::cmp::Ordering::Equal {
-                a.name.to_lowercase().cmp(&b.name.to_lowercase())
-            } else {
-                group_cmp
-            }
-        });
-        aliases.dedup_by(|a, b| a.name == b.name);
-
-        aliases
-    };
-
-    let mut aliases = aliases;
+    aliases.sort_by(|a, b| {
+        let group_cmp = a.group.to_lowercase().cmp(&b.group.to_lowercase());
+        if group_cmp == std::cmp::Ordering::Equal {
+            a.name.to_lowercase().cmp(&b.name.to_lowercase())
+        } else {
+            group_cmp
+        }
+    });
+    aliases.dedup_by(|a, b| a.name == b.name);
 
     if let Some(ref group_filter) = cli.group {
         aliases.retain(|a| a.group.to_lowercase().contains(&group_filter.to_lowercase()));
@@ -156,16 +128,6 @@ fn main() -> Result<()> {
     if aliases.is_empty() {
         eprintln!("ang: No aliases found.");
         std::process::exit(1);
-    }
-
-    if cli.print {
-        for alias in &aliases {
-            println!(
-                "{}\t{}\t{}\t{}",
-                alias.group, alias.name, alias.command, alias.description
-            );
-        }
-        return Ok(());
     }
 
     let selected = run_tui(aliases)?;
