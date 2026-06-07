@@ -1,9 +1,8 @@
 use crate::app::App;
 use ratatui::{
-    layout::{Alignment, Constraint, Direction, Layout, Rect},
+    layout::{Constraint, Direction, Layout, Rect},
     style::{Color, Modifier, Style},
     symbols::border,
-    text::{Line, Span, Text},
     widgets::{
         Block, Borders, Cell, Clear, Paragraph, Row, Table, TableState,
     },
@@ -37,11 +36,6 @@ pub fn draw(frame: &mut Frame, app: &App) {
 
     draw_search(frame, app, chunks[0]);
     draw_table(frame, app, chunks[1]);
-
-    // Draw copied feedback popup if present
-    if app.copied.is_some() {
-        draw_copied_popup(frame);
-    }
 }
 
 fn draw_search(frame: &mut Frame, app: &App, area: Rect) {
@@ -173,35 +167,6 @@ fn draw_table(frame: &mut Frame, app: &App, area: Rect) {
     state.select(Some(app.selected));
 
     frame.render_stateful_widget(table, area, &mut state);
-}
-
-fn draw_copied_popup(frame: &mut Frame) {
-    let area = frame.area();
-    let popup_area = centered_rect(30, 10, area);
-
-    let block = Block::default()
-        .title(" Copied! ")
-        .title_style(Style::default().fg(GREEN).add_modifier(Modifier::BOLD))
-        .borders(Borders::ALL)
-        .border_style(Style::default().fg(GREEN))
-        .border_set(border::ROUNDED);
-
-    let text = Text::from(vec![
-        Line::from(""),
-        Line::from(
-            Span::styled(
-                "✓ Alias copied to clipboard",
-                Style::default().fg(TEXT).add_modifier(Modifier::BOLD),
-            ),
-        )
-        .alignment(Alignment::Center),
-        Line::from(""),
-    ]);
-
-    let paragraph = Paragraph::new(text).block(block);
-
-    frame.render_widget(Clear, popup_area);
-    frame.render_widget(paragraph, popup_area);
 }
 
 fn centered_rect(percent_x: u16, percent_y: u16, r: Rect) -> Rect {

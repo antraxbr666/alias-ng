@@ -4,7 +4,8 @@ mod ui;
 
 use anyhow::Result;
 use app::{App, AppMode};
-use clap::Parser;
+use clap::{CommandFactory, Parser};
+use clap_complete::{generate, Shell};
 use crossterm::{
     event::{self, Event, KeyCode, KeyModifiers},
     terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
@@ -12,15 +13,17 @@ use crossterm::{
 };
 use ratatui::prelude::*;
 use std::env;
-use std::io::stdout;
+use std::io::{self, stdout, BufWriter};
 use std::path::PathBuf;
 use std::time::Duration;
 use ui::draw;
 
+const VERSION: &str = env!("CARGO_PKG_VERSION");
+
 #[derive(Parser, Debug)]
 #[command(name = "ang")]
 #[command(about = "Alias Next Generation — A modern alias browser")]
-#[command(version = "0.1.0")]
+#[command(version = VERSION)]
 struct Cli {
     /// Filter aliases by group name
     #[arg(value_name = "GROUP")]
@@ -30,13 +33,34 @@ struct Cli {
     #[arg(short, long, value_name = "FILE")]
     file: Option<PathBuf>,
 
-    /// Print selected alias to stdout instead of copying to clipboard
+    /// Print all aliases as TSV and exit
     #[arg(long)]
     print: bool,
+
+    /// Generate zsh completion script
+    #[arg(long = "generate-zsh-completion")]
+    generate_zsh_completion: bool,
+
+    /// Write selected alias to file instead of stdout (for zsh widget integration)
+    #[arg(long = "output-file", value_name = "FILE")]
+    output_file: Option<PathBuf>,
 }
 
 fn main() -> Result<()> {
     let cli = Cli::parse();
+
+    // Handle --generate-zsh-completion
+    if cli.generate_zsh_completion {
+        let mut cmd = Cli::command();
+        let bin_name = cmd.get_name().to_string();
+        generate(
+            Shell::Zsh,
+            &mut cmd,
+            bin_name,
+            &mut BufWriter::new(io::stdout().lock()),
+        );
+        return Ok(());
+    }
 
     // Determine alias file to parse
     let alias_file = cli.file.unwrap_or_else(|| {
@@ -75,43 +99,16 @@ fn main() -> Result<()> {
     let selected = run_tui(aliases)?;
 
     if let Some(alias_name) = selected {
-        if cli.print {
-            println!("{}", alias_name);
+        if let Some(output_path) = cli.output_file {
+            // Write to file for widget integration (silent)
+            std::fs::write(&output_path, &alias_name)?;
         } else {
-            // Copy to clipboard using native Linux tools (more reliable than arboard)
-            copy_to_clipboard(&alias_name);
+            // Print to stdout for standalone usage
+            println!("{}", alias_name);
         }
     }
 
     Ok(())
-}
-
-fn copy_to_clipboard(text: &str) {
-    // Try Wayland first, then X11
-    let copied = try_copy_command("wl-copy", &["--type", "text/plain"], text)
-        || try_copy_command("xclip", &["-selection", "clipboard"], text)
-        || try_copy_command("xsel", &["--clipboard", "--input"], text);
-
-    if !copied {
-        // Fallback: print to stdout so user can copy manually
-        println!("{}", text);
-    }
-}
-
-fn try_copy_command(cmd: &str, args: &[&str], text: &str) -> bool {
-    std::process::Command::new(cmd)
-        .args(args)
-        .stdin(std::process::Stdio::piped())
-        .spawn()
-        .and_then(|mut child| {
-            use std::io::Write;
-            if let Some(mut stdin) = child.stdin.take() {
-                stdin.write_all(text.as_bytes())?;
-            }
-            child.wait()
-        })
-        .map(|status| status.success())
-        .unwrap_or(false)
 }
 
 fn run_tui(aliases: Vec<parser::Alias>) -> Result<Option<String>> {
@@ -123,15 +120,9 @@ fn run_tui(aliases: Vec<parser::Alias>) -> Result<Option<String>> {
 
     let mut app = App::new(aliases);
     let mut result: Option<String> = None;
-    let mut should_exit = false;
 
     loop {
         terminal.draw(|f| draw(f, &app))?;
-
-        if should_exit {
-            std::thread::sleep(Duration::from_millis(400));
-            break;
-        }
 
         if event::poll(Duration::from_millis(100))? {
             if let Event::Key(key) = event::read()? {
@@ -153,8 +144,7 @@ fn run_tui(aliases: Vec<parser::Alias>) -> Result<Option<String>> {
                         KeyCode::Enter => {
                             if let Some(alias) = app.selected_alias() {
                                 result = Some(alias.name.clone());
-                                app.copied = Some(alias.name.clone());
-                                should_exit = true;
+                                break;
                             }
                         }
                         _ => {}

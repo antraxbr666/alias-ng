@@ -15,7 +15,6 @@ pub struct App {
     pub search_query: String,
     pub mode: AppMode,
     pub matcher: SkimMatcherV2,
-    pub copied: Option<String>, // feedback message
 }
 
 impl App {
@@ -28,7 +27,6 @@ impl App {
             search_query: String::new(),
             mode: AppMode::Normal,
             matcher: SkimMatcherV2::default(),
-            copied: None,
         }
     }
 

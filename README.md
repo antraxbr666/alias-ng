@@ -1,17 +1,28 @@
-# Alias Next Generation (ang)
+<h1 align="center">⚡ Alias Next Generation — ang</h1>
 
-A modern, fast alias browser written in Rust. Browse, search, and copy your shell aliases with a beautiful TUI interface.
+<p align="center">
+  <img src="https://img.shields.io/github/v/tag/antraxbr666/alias-ng?label=version&color=blue" alt="Version">
+  <img src="https://img.shields.io/badge/license-MIT-green" alt="License">
+</p>
 
-## Features
+<p align="center">A modern alias browser written in Rust 🦀</p>
 
-- **Native TUI** — No external dependencies like fzf, everything is built-in
-- **Fuzzy search** — Real-time filtering as you type
-- **Catppuccin Mocha theme** — Beautiful colors out of the box
-- **Clipboard integration** — Selected alias is automatically copied
-- **Fast** — Written in Rust, parses and displays instantly
-- **Zero config** — Works with your existing alias files
+Browse, search, and select shell aliases interactively with a beautiful TUI. No external dependencies — everything is built-in.
 
-## Installation
+---
+
+## ✨ Features
+
+- 🔍 Fuzzy search through all shell aliases
+- 📂 Automatic grouping by category (Docker, Git, System, etc.)
+- 🎯 Filter by group: `ang docker`
+- ⌨️ Inserts selected alias directly into the command line
+- 🎨 Catppuccin Mocha theme
+- ⚡ Zero configuration — works with your existing alias files
+
+---
+
+## 📦 Installation
 
 ### From source
 
@@ -19,38 +30,90 @@ A modern, fast alias browser written in Rust. Browse, search, and copy your shel
 git clone https://github.com/antraxbr666/alias-ng.git
 cd alias-ng
 cargo build --release
-# Binary will be at target/release/ang
 sudo cp target/release/ang /usr/local/bin/
+sudo mkdir -p /usr/local/share/ang
+sudo cp completions/ang.zsh /usr/local/share/ang/
 ```
 
-## Usage
+### Zsh integration
+
+Add to your `.zshrc`:
+
+```zsh
+source /usr/local/share/ang/ang.zsh
+```
+
+Default keybinding is `Ctrl+A`. To customize:
+
+```zsh
+ANG_KEYBIND="^f"  # Ctrl+F
+source /usr/local/share/ang/ang.zsh
+```
+
+---
+
+## 🚀 Usage
+
+### Interactive TUI
 
 ```bash
-ang              # Launch TUI browser
-ang docker       # Filter by group name
-ang --print      # Print all aliases as TSV
-ang --help       # Show help
+ang              # Browse all aliases
+ang docker       # Filter Docker aliases only
 ```
 
-### TUI Controls
+### Non-interactive
 
-| Key | Action |
-|-----|--------|
-| `↑` / `↓` or `k` / `j` | Navigate |
-| `/` or `s` | Enter search mode |
-| `Enter` | Select and copy alias |
-| `Esc` or `q` | Quit |
-| `g` / `G` | Jump to top / bottom |
+```bash
+ang --print              # Print all aliases as TSV
+ang --print docker       # Print Docker aliases as TSV
+ang --version            # Show version
+ang --help               # Show help
+ang --generate-zsh-completion  # Generate zsh completions
+```
 
-### Environment Variables
+### ⌨️ TUI Keybindings
 
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `ANG_ALIAS_FILES` | Colon-separated list of alias files | `~/.zsh/04-aliases.zsh` |
+| Key      | Action                  |
+| -------- | ----------------------- |
+| `↑` / `↓` | Navigate                |
+| `k` / `j` | Navigate (vim-style)    |
+| `/` / `s` | Enter search mode       |
+| `Enter`  | Select alias            |
+| `Esc` / `q` | Cancel                  |
+| `g` / `G` | Jump top / bottom       |
 
-## Alias File Format
+---
 
-The parser expects standard zsh alias files with optional group headers:
+## ⚙️ Configuration
+
+### `ANG_ALIAS_FILES`
+
+Colon-separated list of files to scan for aliases.
+
+```zsh
+export ANG_ALIAS_FILES="$HOME/.zsh/04-aliases.zsh:$HOME/.zsh/05-custom.zsh"
+```
+
+**Default:** `$HOME/.zsh/04-aliases.zsh`
+
+### `ANG_KEYBIND`
+
+Keybinding to launch the alias browser. Set to `""` to disable auto-binding.
+
+```zsh
+ANG_KEYBIND="^f"   # Ctrl+F
+ANG_KEYBIND=""      # Disable keybinding
+```
+
+**Default:** `^a` (Ctrl+A)
+
+---
+
+## 🔧 How It Works
+
+### Alias File Format
+
+The parser expects standard zsh alias files:
 
 ```zsh
 # Docker
@@ -61,10 +124,100 @@ alias dcd="docker compose down"    # Stop containers
 alias gencommit='git diff | sgpt "..."'  # Generate commit via AI
 ```
 
-- **Group headers**: Lines starting with `#` (but not containing `:`)
-- **Aliases**: Standard `alias name='command' # description` format
-- **Reference lines**: Lines with `:` (like `# Sistema: ls, la`) are ignored
+#### Group Headers
 
-## License
+Groups are defined by comment-only lines (lines that contain only a `#` followed by the group name). These lines tell ang that all aliases below belong to this group, until the next group header is found.
+
+```zsh
+# Docker
+alias dcud="docker compose up -d"  # Start containers in background
+alias dclf="docker compose logs -f"  # Follow logs
+```
+
+#### Alias Definitions
+
+Each alias follows the standard zsh syntax with an optional inline comment for the description:
+
+```zsh
+alias name='command'  # Description
+```
+
+- **Single-quoted values:** `alias ls='eza --color'  # List files`
+- **Double-quoted values:** `alias dcud="docker compose up -d"  # Start containers`
+- **Unquoted values:** `alias c=clear  # Clear terminal`
+
+#### Description
+
+The description is extracted from the inline comment (everything after `#` at the end of the line). If no comment is provided, the description column will be empty.
+
+#### Reference Section (Optional)
+
+You can add a reference summary at the top of your alias file for quick overview. Lines with colons (`:`) are automatically ignored by the parser:
+
+```zsh
+######################################################################
+# ALIASES REFERENCE
+# ─────────────────────────────────────────────────────────────────────
+# Sistema:     ls, la, l, cat, c, clean, vim
+# Docker:      dcud, dclf, dcd, dcr
+######################################################################
+
+# Sistema
+alias ls='eza --color'  # List files with colors
+...
+```
+
+#### Full Example
+
+```zsh
+######################################################################
+# ALIASES REFERENCE
+# ─────────────────────────────────────────────────────────────────────
+# Sistema:     ls, la, l, cat, c, clean
+# Git:         gencommit
+# Docker:      dcud, dclf, dcd, dcr
+######################################################################
+
+# Sistema
+alias ls='eza --color'                    # List files with colors
+alias la='eza --git --icons -lgha'        # Detailed list + git status
+alias c='clear'                           # Clear terminal
+
+# Git
+alias gencommit='git diff | sgpt "..."'   # Generate commit via AI
+
+# Docker
+alias dcud="docker compose up -d"         # Start containers in background
+alias dclf="docker compose logs -f"       # Follow logs
+alias dcd="docker compose down"           # Stop containers
+alias dcr="docker compose restart"        # Restart containers
+```
+
+### Parsing Rules
+
+| Rule                         | Behavior                        |
+| ---------------------------- | ------------------------------- |
+| `# Group Name`               | Sets the active group           |
+| `# ===` / `# ---`            | Ignored (separator lines)       |
+| `# Key: value`               | Ignored (reference summaries)   |
+| `alias name='cmd'  # Desc`   | Extracts alias + description    |
+| `alias name='cmd'`           | Extracts alias (no description) |
+
+---
+
+## 📋 Requirements
+
+- 🐚 zsh (for widget integration)
+- 🔧 Rust toolchain (to build from source)
+
+---
+
+## 📄 License
 
 MIT
+
+---
+
+<p align="center">
+  Made with ❤️ by <a href="https://github.com/antraxbr666">antrax</a>
+</p>
