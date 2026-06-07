@@ -1,7 +1,7 @@
 <h1 align="center">⚡ Alias Next Generation — ang</h1>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/version-0.5.6-blue" alt="Version">
+  <img src="https://img.shields.io/badge/version-0.6.0-blue" alt="Version">
   <img src="https://img.shields.io/badge/license-MIT-green" alt="License">
   <img src="https://img.shields.io/badge/rust-1.71+-orange?logo=rust" alt="Rust">
   <img src="https://img.shields.io/badge/crates-deps-blue?logo=rust" alt="Crates">
@@ -30,6 +30,33 @@ Browse, search, and select shell aliases interactively with a beautiful TUI. Sel
 ---
 
 ## 📦 Installation
+
+### Quick install (recommended)
+
+```bash
+curl -sSL https://raw.githubusercontent.com/antraxbr666/alias-ng/main/install.sh | bash
+```
+
+### Manual download
+
+Download the latest binary from [GitHub Releases](https://github.com/antraxbr666/alias-ng/releases):
+
+| Architecture | File                        |
+| ------------ | --------------------------- |
+| x86_64       | `ang-x86_64-linux`            |
+| aarch64      | `ang-aarch64-linux`           |
+
+```bash
+# x86_64
+curl -sL https://github.com/antraxbr666/alias-ng/releases/latest/download/ang-x86_64-linux -o ang
+chmod +x ang
+sudo mv ang /usr/local/bin/
+
+# aarch64
+curl -sL https://github.com/antraxbr666/alias-ng/releases/latest/download/ang-aarch64-linux -o ang
+chmod +x ang
+sudo mv ang /usr/local/bin/
+```
 
 ### From source
 
