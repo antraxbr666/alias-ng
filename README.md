@@ -3,11 +3,17 @@
 <p align="center">
   <img src="https://img.shields.io/badge/version-0.5.4-blue" alt="Version">
   <img src="https://img.shields.io/badge/license-MIT-green" alt="License">
+  <img src="https://img.shields.io/badge/rust-1.71+-orange?logo=rust" alt="Rust">
+  <img src="https://img.shields.io/badge/crates-deps-blue?logo=rust" alt="Crates">
 </p>
 
 <p align="center">A modern alias browser written in Rust 🦀</p>
 
 Browse, search, and select shell aliases interactively with a beautiful TUI. Selected alias is copied to clipboard.
+
+<p align="center">
+  <img src="screenshot/shot-1.png" alt="ang TUI screenshot" width="700">
+</p>
 
 ---
 
