@@ -40,8 +40,7 @@ impl App {
                 .iter()
                 .enumerate()
                 .filter(|(_, a)| {
-                    let text = format!("{} {} {} {}", a.group, a.name, a.command, a.description)
-                        .to_lowercase();
+                    let text = a.command.to_lowercase();
                     self.matcher.fuzzy_match(&text, &query).is_some()
                 })
                 .map(|(i, _)| i)

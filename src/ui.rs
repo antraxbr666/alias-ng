@@ -22,8 +22,8 @@ pub const PEACH: Color = Color::Rgb(250, 179, 135);
 pub fn draw(frame: &mut Frame, app: &App) {
     let area = frame.area();
 
-    // Create a centered, smaller window (80x24 max)
-    let popup_area = centered_rect(80, 24, area);
+    // Create a centered, smaller window (80x31 max)
+    let popup_area = centered_rect(80, 31, area);
 
     // Clear the background around the popup
     frame.render_widget(Clear, popup_area);
