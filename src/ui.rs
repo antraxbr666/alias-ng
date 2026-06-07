@@ -137,7 +137,8 @@ fn draw_table(frame: &mut Frame, app: &App, area: Rect) {
 
     let count = app.filtered.len();
     let total = app.aliases.len();
-    let title = format!(" ang v0.1.0 — {}/{} aliases ", count, total);
+    let version = env!("CARGO_PKG_VERSION");
+    let title = format!(" ang v{} — {}/{} aliases ", version, count, total);
 
     let table = Table::new(
         rows,
