@@ -21,7 +21,7 @@ impl Parser {
 
     pub fn parse_content(content: &str) -> Vec<Alias> {
         let mut aliases = Vec::new();
-        let mut current_group = "ungrouped".to_string();
+        let mut current_group = "other".to_string();
 
         for line in content.lines() {
             let trimmed = line.trim();
@@ -29,14 +29,10 @@ impl Parser {
                 continue;
             }
 
-            // Group header: # GroupName (but not # Key: value or separators)
+            // Group header: # GroupName (strict validation)
             if let Some(header) = trimmed.strip_prefix('#') {
                 let header = header.trim();
-                if !header.is_empty()
-                    && !header.contains(':')
-                    && !header.chars().all(|c| "=-* ".contains(c))
-                    && header.len() > 2
-                {
+                if Self::is_valid_group_header(header) {
                     current_group = header.to_string();
                 }
                 continue;
@@ -51,6 +47,29 @@ impl Parser {
         }
 
         aliases
+    }
+
+    fn is_valid_group_header(header: &str) -> bool {
+        if header.is_empty() || header.len() <= 2 {
+            return false;
+        }
+
+        // Must contain only alphanumeric, spaces, and hyphens
+        // Must not start with special chars
+        // Must not contain ellipsis, parentheses, equals, etc.
+        let invalid_chars = ['(', ')', '=', '*', '#', '.', '-', '<', '>', '{', '}', '[', ']'];
+        
+        if header.chars().any(|c| invalid_chars.contains(&c)) {
+            return false;
+        }
+
+        // Must start with a letter
+        if !header.chars().next().map_or(false, |c| c.is_alphabetic()) {
+            return false;
+        }
+
+        // Must contain only letters, numbers, and spaces
+        header.chars().all(|c| c.is_alphanumeric() || c == ' ')
     }
 
     fn parse_alias_line(line: &str, group: &str) -> Option<Alias> {
@@ -117,7 +136,7 @@ alias dcud="docker compose up -d"  # Start containers
         let content = r#"alias ls='eza --color'"#;
         let aliases = Parser::parse_content(content);
         assert_eq!(aliases.len(), 1);
-        assert_eq!(aliases[0].group, "ungrouped");
+        assert_eq!(aliases[0].group, "other");
         assert_eq!(aliases[0].name, "ls");
         assert_eq!(aliases[0].command, "eza --color");
     }

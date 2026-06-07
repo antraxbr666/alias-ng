@@ -15,7 +15,7 @@ impl MetadataEnricher {
 
         for alias in runtime_aliases.iter_mut() {
             if let Some(meta) = metadata.get(&alias.name) {
-                if meta.group != "ungrouped" {
+                if meta.group != "other" {
                     alias.group = meta.group.clone();
                 }
                 if !meta.description.is_empty() {
