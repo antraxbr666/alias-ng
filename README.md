@@ -44,12 +44,7 @@ Add to your `.zshrc`:
 source /usr/local/share/ang/ang.zsh
 ```
 
-Default keybinding is `Ctrl+A`. To customize:
-
-```zsh
-ANG_KEYBIND="^f"  # Ctrl+F
-source /usr/local/share/ang/ang.zsh
-```
+This enables the `ang` command to insert selected aliases into your current prompt.
 
 ---
 
@@ -90,7 +85,7 @@ ang --generate-zsh-completion  # Generate zsh completions
 ang automatically discovers and collects all your zsh aliases:
 
 1. **Runtime Collection**: Executes `zsh -fc 'alias -L'` to get all loaded aliases (plugins, frameworks, custom)
-2. **File Discovery**: Scans `.zshrc`, `~/.zsh/*.zsh`, and oh-my-zsh plugins for metadata
+2. **File Discovery**: Scans `~/.zsh/*.zsh` for metadata (groups and descriptions)
 3. **Metadata Enrichment**: Merges groups and descriptions from static files into runtime aliases
 
 No configuration needed — ang finds everything automatically.

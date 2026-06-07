@@ -5,16 +5,12 @@
 # Source this file in your .zshrc to enable the ang widget.
 # Usage:
 #   source /usr/local/share/ang/ang.zsh
-#   # Or wherever you installed the completion file
 #
-# Then press Ctrl+A (default) to launch the alias browser.
+# Then type 'ang' to launch the alias browser.
 # ============================================================================
 
 # Only load in zsh
 [[ -n "$ZSH_VERSION" ]] || return 0
-
-# Configuration --------------------------------------------------------------
-ANG_KEYBIND="${ANG_KEYBIND:-^a}"
 
 # Widget function ------------------------------------------------------------
 _ang_widget() {
@@ -40,5 +36,4 @@ _ang_widget() {
 # Register widget ------------------------------------------------------------
 if [[ -o interactive ]]; then
     zle -N _ang_widget
-    [[ -n "$ANG_KEYBIND" ]] && bindkey "$ANG_KEYBIND" _ang_widget
 fi
