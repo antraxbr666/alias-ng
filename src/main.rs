@@ -3,7 +3,6 @@ mod collector;
 mod discovery;
 mod enricher;
 mod parser;
-mod terminal;
 mod ui;
 
 use anyhow::Result;
@@ -19,7 +18,7 @@ use ratatui::prelude::*;
 use std::io::{self, stdout, BufWriter};
 use std::path::PathBuf;
 use std::time::Duration;
-use ui::draw;
+use ui::{draw, draw_notification};
 
 const VERSION: &str = env!("CARGO_PKG_VERSION");
 
@@ -101,7 +100,10 @@ fn main() -> Result<()> {
     let selected = run_tui(aliases)?;
 
     if let Some(alias_name) = selected {
-        terminal::inject_to_tty(&alias_name);
+        if let Ok(mut clipboard) = arboard::Clipboard::new() {
+            let _ = clipboard.set_text(&alias_name);
+        }
+        show_notification(&alias_name)?;
     }
 
     Ok(())
@@ -173,4 +175,29 @@ fn run_tui(aliases: Vec<parser::Alias>) -> Result<Option<String>> {
     terminal.backend_mut().execute(LeaveAlternateScreen)?;
 
     Ok(result)
+}
+
+fn show_notification(alias_name: &str) -> Result<()> {
+    enable_raw_mode()?;
+    let mut stdout = stdout();
+    stdout.execute(EnterAlternateScreen)?;
+    let backend = CrosstermBackend::new(stdout);
+    let mut terminal = Terminal::new(backend)?;
+
+    loop {
+        terminal.draw(|f| draw_notification(f, alias_name))?;
+
+        if event::poll(Duration::from_millis(1500))? {
+            if let Event::Key(_) = event::read()? {
+                break;
+            }
+        } else {
+            break;
+        }
+    }
+
+    disable_raw_mode()?;
+    terminal.backend_mut().execute(LeaveAlternateScreen)?;
+
+    Ok(())
 }

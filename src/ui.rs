@@ -1,6 +1,6 @@
 use crate::app::App;
 use ratatui::{
-    layout::{Constraint, Direction, Layout, Rect},
+    layout::{Alignment, Constraint, Direction, Layout, Rect},
     style::{Color, Modifier, Style},
     symbols::border,
     widgets::{
@@ -195,4 +195,30 @@ fn truncate(s: &str, max_len: usize) -> String {
     } else {
         s.to_string()
     }
+}
+
+pub fn draw_notification(frame: &mut Frame, alias_name: &str) {
+    let area = frame.area();
+    let popup_area = centered_rect(50, 15, area);
+
+    frame.render_widget(Clear, popup_area);
+
+    let message = format!("  ✓  Alias '{}' copied to clipboard  ", alias_name);
+
+    let paragraph = Paragraph::new(message)
+        .style(
+            Style::default()
+                .fg(TEXT)
+                .bg(SURFACE)
+                .add_modifier(Modifier::BOLD),
+        )
+        .alignment(Alignment::Center)
+        .block(
+            Block::default()
+                .borders(Borders::ALL)
+                .border_style(Style::default().fg(MAUVE))
+                .border_set(border::ROUNDED),
+        );
+
+    frame.render_widget(paragraph, popup_area);
 }

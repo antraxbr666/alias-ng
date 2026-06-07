@@ -7,7 +7,7 @@
 
 <p align="center">A modern alias browser written in Rust 🦀</p>
 
-Browse, search, and select shell aliases interactively with a beautiful TUI. Selected alias is injected directly into your prompt.
+Browse, search, and select shell aliases interactively with a beautiful TUI. Selected alias is copied to clipboard.
 
 ---
 
@@ -16,7 +16,7 @@ Browse, search, and select shell aliases interactively with a beautiful TUI. Sel
 - 🔍 Search through all shell aliases
 - 📂 Automatic grouping by category (Docker, Git, System, etc.)
 - 🎯 Filter by group: `ang docker`
-- ⌨️ Selected alias injected into current prompt
+- 📋 Copies selected alias to clipboard
 - 🎨 Catppuccin Mocha theme
 - ⚡ Auto-detects all zsh aliases (plugins, frameworks, custom files)
 - 🔄 Runtime collection via `alias -L` with metadata enrichment
@@ -45,7 +45,7 @@ ang              # Browse all aliases (auto-detected)
 ang docker       # Filter Docker aliases only
 ```
 
-After selecting an alias, it is injected into your current prompt. You can edit it or press Enter to execute.
+After selecting an alias, it is copied to clipboard and a notification is displayed.
 
 ### Non-interactive
 
@@ -76,7 +76,7 @@ ang automatically discovers and collects all your zsh aliases:
 1. **Runtime Collection**: Executes `zsh -fc 'alias -L'` to get all loaded aliases (plugins, frameworks, custom)
 2. **File Discovery**: Scans `~/.zsh/*.zsh` for metadata (groups and descriptions)
 3. **Metadata Enrichment**: Merges groups and descriptions from static files into runtime aliases
-4. **Prompt Injection**: Uses TIOCSTI ioctl to inject selected alias into terminal input
+4. **Clipboard**: Copies selected alias to clipboard with notification
 
 No configuration needed — ang finds everything automatically.
 
