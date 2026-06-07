@@ -220,7 +220,7 @@ fn truncate(s: &str, max_len: usize) -> String {
 
 pub fn draw_notification(frame: &mut Frame, alias_name: &str) {
     let area = frame.area();
-    let popup_area = centered_rect_fixed(45, 6, area);
+    let popup_area = centered_rect_fixed(45, 4, area);
 
     frame.render_widget(Clear, popup_area);
 
@@ -231,7 +231,7 @@ pub fn draw_notification(frame: &mut Frame, alias_name: &str) {
             Span::styled(" copied to clipboard", Style::default().fg(TEXT).bg(SURFACE)),
         ]),
         Line::from(Span::styled(
-            "press any key to exit",
+            "press any key to continue",
             Style::default().fg(OVERLAY).bg(SURFACE),
         )),
     ];
