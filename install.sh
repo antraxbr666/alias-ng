@@ -12,15 +12,15 @@ YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
 info() {
-    echo -e "${GREEN}[ang]${NC} $1"
+    echo -e "${GREEN}[ang]${NC} $1" >&2
 }
 
 warn() {
-    echo -e "${YELLOW}[ang]${NC} $1"
+    echo -e "${YELLOW}[ang]${NC} $1" >&2
 }
 
 error() {
-    echo -e "${RED}[ang]${NC} $1"
+    echo -e "${RED}[ang]${NC} $1" >&2
     exit 1
 }
 
@@ -108,10 +108,10 @@ verify_installation() {
 
 # Main
 main() {
-    echo ""
-    echo "  Alias Next Generation (ang) Installer"
-    echo "  ──────────────────────────────────────"
-    echo ""
+    echo "" >&2
+    echo "  Alias Next Generation (ang) Installer" >&2
+    echo "  ──────────────────────────────────────" >&2
+    echo "" >&2
 
     local arch os version tmp_file
 
@@ -125,9 +125,9 @@ main() {
     install_binary "$tmp_file"
     verify_installation
 
-    echo ""
+    echo "" >&2
     info "Run 'ang' to get started!"
-    echo ""
+    echo "" >&2
 }
 
 main
