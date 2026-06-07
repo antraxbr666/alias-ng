@@ -1,7 +1,7 @@
 <h1 align="center">⚡ Alias Next Generation — ang</h1>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/version-0.6.5-blue" alt="Version">
+  <img src="https://img.shields.io/badge/version-0.6.6-blue" alt="Version">
   <img src="https://img.shields.io/badge/license-MIT-green" alt="License">
   <img src="https://img.shields.io/badge/rust-1.71+-orange?logo=rust" alt="Rust">
   <img src="https://img.shields.io/badge/crates-deps-blue?logo=rust" alt="Crates">
@@ -67,20 +67,9 @@ cargo build --release
 sudo cp target/release/ang /usr/local/bin/
 ```
 
-### Clipboard
-
-ang uses **OSC 52** escape sequence to copy aliases to clipboard. This works:
-- Locally (X11, Wayland)
-- Over SSH
-- In any terminal that supports OSC 52 (Kitty, iTerm2, Alacritty, WezTerm, foot, etc.)
-
-No external dependencies needed (no xclip, wl-copy, xsel).
-
 ---
 
 ## 🚀 Usage
-
-### Interactive TUI
 
 ```bash
 ang              # Browse all aliases (auto-detected)
@@ -88,15 +77,6 @@ ang docker       # Filter Docker aliases only
 ```
 
 After selecting an alias, it is copied to clipboard and a notification is displayed.
-
-### Non-interactive
-
-```bash
-ang --print              # Print all aliases as TSV
-ang --print docker       # Print Docker aliases as TSV
-ang --version            # Show version
-ang --help               # Show help
-```
 
 ### ⌨️ TUI Keybindings
 
@@ -121,14 +101,6 @@ ang automatically discovers and collects all your zsh aliases:
 4. **Clipboard**: Copies selected alias to clipboard with notification
 
 No configuration needed — ang finds everything automatically.
-
-### `--file` Flag (Legacy Mode)
-
-If you want to parse a specific file only:
-
-```bash
-ang --file ~/.zsh/04-aliases.zsh
-```
 
 ---
 
