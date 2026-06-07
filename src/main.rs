@@ -66,7 +66,14 @@ fn main() -> Result<()> {
         let files = discovery::FileDiscovery::discover();
         enricher::MetadataEnricher::enrich(&mut aliases, &files);
 
-        aliases.sort_by(|a, b| a.name.to_lowercase().cmp(&b.name.to_lowercase()));
+        aliases.sort_by(|a, b| {
+            let group_cmp = a.group.to_lowercase().cmp(&b.group.to_lowercase());
+            if group_cmp == std::cmp::Ordering::Equal {
+                a.name.to_lowercase().cmp(&b.name.to_lowercase())
+            } else {
+                group_cmp
+            }
+        });
         aliases.dedup_by(|a, b| a.name == b.name);
 
         aliases
