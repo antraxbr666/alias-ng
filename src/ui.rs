@@ -190,6 +190,26 @@ fn centered_rect(percent_x: u16, percent_y: u16, r: Rect) -> Rect {
         .split(popup_layout[1])[1]
 }
 
+fn centered_rect_fixed(percent_x: u16, height: u16, r: Rect) -> Rect {
+    let popup_layout = Layout::default()
+        .direction(Direction::Vertical)
+        .constraints([
+            Constraint::Fill(1),
+            Constraint::Length(height),
+            Constraint::Fill(1),
+        ])
+        .split(r);
+
+    Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints([
+            Constraint::Percentage((100 - percent_x) / 2),
+            Constraint::Percentage(percent_x),
+            Constraint::Percentage((100 - percent_x) / 2),
+        ])
+        .split(popup_layout[1])[1]
+}
+
 fn truncate(s: &str, max_len: usize) -> String {
     if s.len() > max_len {
         format!("{}...", &s[..max_len.saturating_sub(3)])
@@ -200,7 +220,7 @@ fn truncate(s: &str, max_len: usize) -> String {
 
 pub fn draw_notification(frame: &mut Frame, alias_name: &str) {
     let area = frame.area();
-    let popup_area = centered_rect(45, 7, area);
+    let popup_area = centered_rect_fixed(45, 6, area);
 
     frame.render_widget(Clear, popup_area);
 
