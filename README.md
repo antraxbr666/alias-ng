@@ -18,7 +18,8 @@ Browse, search, and select shell aliases interactively with a beautiful TUI. No 
 - 🎯 Filter by group: `ang docker`
 - ⌨️ Inserts selected alias directly into the command line
 - 🎨 Catppuccin Mocha theme
-- ⚡ Zero configuration — works with your existing alias files
+- ⚡ Auto-detects all zsh aliases (plugins, frameworks, custom files)
+- 🔄 Runtime collection via `alias -L` with metadata enrichment
 
 ---
 
@@ -57,7 +58,7 @@ source /usr/local/share/ang/ang.zsh
 ### Interactive TUI
 
 ```bash
-ang              # Browse all aliases
+ang              # Browse all aliases (auto-detected)
 ang docker       # Filter Docker aliases only
 ```
 
@@ -84,34 +85,27 @@ ang --generate-zsh-completion  # Generate zsh completions
 
 ---
 
-## ⚙️ Configuration
+## ⚙️ How It Works
 
-### `ANG_ALIAS_FILES`
+ang automatically discovers and collects all your zsh aliases:
 
-Colon-separated list of files to scan for aliases.
+1. **Runtime Collection**: Executes `zsh -fc 'alias -L'` to get all loaded aliases (plugins, frameworks, custom)
+2. **File Discovery**: Scans `.zshrc`, `~/.zsh/*.zsh`, and oh-my-zsh plugins for metadata
+3. **Metadata Enrichment**: Merges groups and descriptions from static files into runtime aliases
 
-```zsh
-export ANG_ALIAS_FILES="$HOME/.zsh/04-aliases.zsh:$HOME/.zsh/05-custom.zsh"
+No configuration needed — ang finds everything automatically.
+
+### `--file` Flag (Legacy Mode)
+
+If you want to parse a specific file only:
+
+```bash
+ang --file ~/.zsh/04-aliases.zsh
 ```
-
-**Default:** `$HOME/.zsh/04-aliases.zsh`
-
-### `ANG_KEYBIND`
-
-Keybinding to launch the alias browser. Set to `""` to disable auto-binding.
-
-```zsh
-ANG_KEYBIND="^f"   # Ctrl+F
-ANG_KEYBIND=""      # Disable keybinding
-```
-
-**Default:** `^a` (Ctrl+A)
 
 ---
 
-## 🔧 How It Works
-
-### Alias File Format
+## 🔧 Alias File Format
 
 The parser expects standard zsh alias files:
 
@@ -124,7 +118,7 @@ alias dcd="docker compose down"    # Stop containers
 alias gencommit='git diff | sgpt "..."'  # Generate commit via AI
 ```
 
-#### Group Headers
+### Group Headers
 
 Groups are defined by comment-only lines (lines that contain only a `#` followed by the group name). These lines tell ang that all aliases below belong to this group, until the next group header is found.
 
@@ -134,7 +128,7 @@ alias dcud="docker compose up -d"  # Start containers in background
 alias dclf="docker compose logs -f"  # Follow logs
 ```
 
-#### Alias Definitions
+### Alias Definitions
 
 Each alias follows the standard zsh syntax with an optional inline comment for the description:
 
@@ -146,11 +140,11 @@ alias name='command'  # Description
 - **Double-quoted values:** `alias dcud="docker compose up -d"  # Start containers`
 - **Unquoted values:** `alias c=clear  # Clear terminal`
 
-#### Description
+### Description
 
 The description is extracted from the inline comment (everything after `#` at the end of the line). If no comment is provided, the description column will be empty.
 
-#### Reference Section (Optional)
+### Reference Section (Optional)
 
 You can add a reference summary at the top of your alias file for quick overview. Lines with colons (`:`) are automatically ignored by the parser:
 
@@ -167,7 +161,7 @@ alias ls='eza --color'  # List files with colors
 ...
 ```
 
-#### Full Example
+### Full Example
 
 ```zsh
 ######################################################################
@@ -207,7 +201,7 @@ alias dcr="docker compose restart"        # Restart containers
 
 ## 📋 Requirements
 
-- 🐚 zsh (for widget integration)
+- 🐚 zsh (required for runtime alias collection)
 - 🔧 Rust toolchain (to build from source)
 
 ---

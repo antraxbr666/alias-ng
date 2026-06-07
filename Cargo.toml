@@ -1,6 +1,6 @@
 [package]
 name = "ang"
-version = "0.1.2"
+version = "0.2.0"
 edition = "2021"
 authors = ["antrax <antraxbr666>"]
 description = "Alias Next Generation - A modern alias browser"
@@ -16,6 +16,8 @@ ratatui = "0.29"
 crossterm = "0.28"
 fuzzy-matcher = "0.3"
 dirs = "5"
+glob = "0.3"
+shellexpand = "3"
 
 [profile.release]
 opt-level = 3

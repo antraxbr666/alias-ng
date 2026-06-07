@@ -1,4 +1,7 @@
 mod app;
+mod collector;
+mod discovery;
+mod enricher;
 mod parser;
 mod ui;
 
@@ -12,7 +15,6 @@ use crossterm::{
     ExecutableCommand,
 };
 use ratatui::prelude::*;
-use std::env;
 use std::io::{self, stdout, BufWriter};
 use std::path::PathBuf;
 use std::time::Duration;
@@ -25,23 +27,18 @@ const VERSION: &str = env!("CARGO_PKG_VERSION");
 #[command(about = "Alias Next Generation — A modern alias browser")]
 #[command(version = VERSION)]
 struct Cli {
-    /// Filter aliases by group name
     #[arg(value_name = "GROUP")]
     group: Option<String>,
 
-    /// Alias file to scan (default: ~/.zsh/04-aliases.zsh)
     #[arg(short, long, value_name = "FILE")]
     file: Option<PathBuf>,
 
-    /// Print all aliases as TSV and exit
     #[arg(long)]
     print: bool,
 
-    /// Generate zsh completion script
     #[arg(long = "generate-zsh-completion")]
     generate_zsh_completion: bool,
 
-    /// Write selected alias to file instead of stdout (for zsh widget integration)
     #[arg(long = "output-file", value_name = "FILE")]
     output_file: Option<PathBuf>,
 }
@@ -49,7 +46,6 @@ struct Cli {
 fn main() -> Result<()> {
     let cli = Cli::parse();
 
-    // Handle --generate-zsh-completion
     if cli.generate_zsh_completion {
         let mut cmd = Cli::command();
         let bin_name = cmd.get_name().to_string();
@@ -62,22 +58,22 @@ fn main() -> Result<()> {
         return Ok(());
     }
 
-    // Determine alias file to parse
-    let alias_file = cli.file.unwrap_or_else(|| {
-        env::var("ANG_ALIAS_FILES")
-            .ok()
-            .and_then(|s| s.split(':').next().map(PathBuf::from))
-            .unwrap_or_else(|| {
-                dirs::home_dir()
-                    .unwrap_or_default()
-                    .join(".zsh/04-aliases.zsh")
-            })
-    });
+    let aliases = if let Some(ref file) = cli.file {
+        parser::Parser::parse_file(file)?
+    } else {
+        let mut aliases = collector::RuntimeCollector::collect()?;
 
-    // Parse aliases
-    let mut aliases = parser::Parser::parse_file(&alias_file)?;
+        let files = discovery::FileDiscovery::discover();
+        enricher::MetadataEnricher::enrich(&mut aliases, &files);
 
-    // Filter by group if specified
+        aliases.sort_by(|a, b| a.name.to_lowercase().cmp(&b.name.to_lowercase()));
+        aliases.dedup_by(|a, b| a.name == b.name);
+
+        aliases
+    };
+
+    let mut aliases = aliases;
+
     if let Some(ref group_filter) = cli.group {
         aliases.retain(|a| a.group.to_lowercase().contains(&group_filter.to_lowercase()));
     }
@@ -87,23 +83,22 @@ fn main() -> Result<()> {
         std::process::exit(1);
     }
 
-    // If --print flag, just print the list and exit (for scripting)
     if cli.print {
         for alias in &aliases {
-            println!("{}\t{}\t{}\t{}", alias.group, alias.name, alias.command, alias.description);
+            println!(
+                "{}\t{}\t{}\t{}",
+                alias.group, alias.name, alias.command, alias.description
+            );
         }
         return Ok(());
     }
 
-    // Run TUI
     let selected = run_tui(aliases)?;
 
     if let Some(alias_name) = selected {
         if let Some(output_path) = cli.output_file {
-            // Write to file for widget integration (silent)
             std::fs::write(&output_path, &alias_name)?;
         } else {
-            // Print to stdout for standalone usage
             println!("{}", alias_name);
         }
     }
