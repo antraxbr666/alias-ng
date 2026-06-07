@@ -34,6 +34,17 @@ cargo build --release
 sudo cp target/release/ang /usr/local/bin/
 ```
 
+### Clipboard dependencies
+
+ang uses native clipboard tools to copy aliases. Install the one for your display server:
+
+| Display Server | Detection               | Package                               | Install Command                                 |
+| -------------- | ----------------------- | ------------------------------------- | ----------------------------------------------- |
+| **Wayland**      | `$WAYLAND_DISPLAY` set  | `wl-clipboard` (provides `wl-copy`)       | `sudo pacman -S wl-clipboard` (Arch)            |
+| **X11**          | fallback (no Wayland)   | `xclip` or `xsel`                       | `sudo pacman -S xclip` (Arch)                   |
+
+ang checks for these dependencies on startup and shows an error if none are found.
+
 ---
 
 ## 🚀 Usage
@@ -188,6 +199,7 @@ alias dcr="docker compose restart"        # Restart containers
 
 - 🐚 zsh (required for runtime alias collection)
 - 🔧 Rust toolchain (to build from source)
+- 📋 Clipboard tool: `wl-clipboard` (Wayland) or `xclip`/`xsel` (X11)
 
 ---
 
