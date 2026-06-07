@@ -1,7 +1,7 @@
 <h1 align="center">⚡ Alias Next Generation — ang</h1>
 
 <p align="center">
-  <img src="https://img.shields.io/github/v/tag/antraxbr666/alias-ng?label=version&color=blue&sort=semver" alt="Version">
+  <img src="https://img.shields.io/github/v/tag/antraxbr666/alias-ng?label=version&color=blue&cache=0" alt="Version">
   <img src="https://img.shields.io/badge/license-MIT-green" alt="License">
 </p>
 
