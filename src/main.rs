@@ -1,4 +1,5 @@
 mod app;
+mod clipboard;
 mod collector;
 mod discovery;
 mod enricher;
@@ -55,6 +56,11 @@ fn main() -> Result<()> {
         return Ok(());
     }
 
+    if let Err(e) = clipboard::check_dependencies() {
+        eprintln!("ang: clipboard error: {}", e);
+        std::process::exit(1);
+    }
+
     let aliases = if let Some(ref file) = cli.file {
         parser::Parser::parse_file(file)?
     } else {
@@ -100,9 +106,7 @@ fn main() -> Result<()> {
     let selected = run_tui(aliases)?;
 
     if let Some(alias_name) = selected {
-        if let Ok(mut clipboard) = arboard::Clipboard::new() {
-            let _ = clipboard.set_text(&alias_name);
-        }
+        clipboard::copy_to_clipboard(&alias_name)?;
         show_notification(&alias_name)?;
     }
 

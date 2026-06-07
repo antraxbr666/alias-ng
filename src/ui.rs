@@ -200,23 +200,21 @@ fn truncate(s: &str, max_len: usize) -> String {
 
 pub fn draw_notification(frame: &mut Frame, alias_name: &str) {
     let area = frame.area();
-    let popup_area = centered_rect(50, 15, area);
+    let popup_area = centered_rect(45, 10, area);
 
     frame.render_widget(Clear, popup_area);
 
     let lines = vec![
-        Line::from(""),
         Line::from(vec![
-            Span::styled("  ✓  Alias '", Style::default().fg(TEXT)),
-            Span::styled(alias_name, Style::default().fg(GREEN).add_modifier(Modifier::BOLD)),
-            Span::styled("' copied to clipboard  ", Style::default().fg(TEXT)),
+            Span::styled("  ", Style::default().bg(SURFACE)),
+            Span::styled(alias_name, Style::default().fg(GREEN).add_modifier(Modifier::BOLD).bg(SURFACE)),
+            Span::styled(" copied to clipboard", Style::default().fg(TEXT).bg(SURFACE)),
         ]),
         Line::from(""),
         Line::from(Span::styled(
-            "  Press any key to continue  ",
-            Style::default().fg(OVERLAY),
+            "  press any key to exit  ",
+            Style::default().fg(OVERLAY).bg(SURFACE),
         )),
-        Line::from(""),
     ];
 
     let paragraph = Paragraph::new(lines)
@@ -224,8 +222,10 @@ pub fn draw_notification(frame: &mut Frame, alias_name: &str) {
         .alignment(Alignment::Center)
         .block(
             Block::default()
+                .title(" clipboard ")
+                .title_style(Style::default().fg(MAUVE).add_modifier(Modifier::BOLD))
                 .borders(Borders::ALL)
-                .border_style(Style::default().fg(MAUVE))
+                .border_style(Style::default().fg(OVERLAY))
                 .border_set(border::ROUNDED),
         );
 
