@@ -1,6 +1,4 @@
 use crate::parser::Alias;
-use fuzzy_matcher::skim::SkimMatcherV2;
-use fuzzy_matcher::FuzzyMatcher;
 
 #[derive(Debug, Clone)]
 pub enum AppMode {
@@ -14,7 +12,6 @@ pub struct App {
     pub selected: usize,
     pub search_query: String,
     pub mode: AppMode,
-    pub matcher: SkimMatcherV2,
 }
 
 impl App {
@@ -26,7 +23,6 @@ impl App {
             selected: 0,
             search_query: String::new(),
             mode: AppMode::Normal,
-            matcher: SkimMatcherV2::default(),
         }
     }
 
@@ -39,10 +35,7 @@ impl App {
                 .aliases
                 .iter()
                 .enumerate()
-                .filter(|(_, a)| {
-                    let text = a.command.to_lowercase();
-                    self.matcher.fuzzy_match(&text, &query).is_some()
-                })
+                .filter(|(_, a)| a.command.to_lowercase().contains(&query))
                 .map(|(i, _)| i)
                 .collect();
         }
