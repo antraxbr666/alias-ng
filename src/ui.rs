@@ -3,6 +3,7 @@ use ratatui::{
     layout::{Alignment, Constraint, Direction, Layout, Rect},
     style::{Color, Modifier, Style},
     symbols::border,
+    text::{Line, Span},
     widgets::{
         Block, Borders, Cell, Clear, Paragraph, Row, Table, TableState,
     },
@@ -203,15 +204,23 @@ pub fn draw_notification(frame: &mut Frame, alias_name: &str) {
 
     frame.render_widget(Clear, popup_area);
 
-    let message = format!("  ✓  Alias '{}' copied to clipboard  ", alias_name);
+    let lines = vec![
+        Line::from(""),
+        Line::from(vec![
+            Span::styled("  ✓  Alias '", Style::default().fg(TEXT)),
+            Span::styled(alias_name, Style::default().fg(GREEN).add_modifier(Modifier::BOLD)),
+            Span::styled("' copied to clipboard  ", Style::default().fg(TEXT)),
+        ]),
+        Line::from(""),
+        Line::from(Span::styled(
+            "  Press any key to continue  ",
+            Style::default().fg(OVERLAY),
+        )),
+        Line::from(""),
+    ];
 
-    let paragraph = Paragraph::new(message)
-        .style(
-            Style::default()
-                .fg(TEXT)
-                .bg(SURFACE)
-                .add_modifier(Modifier::BOLD),
-        )
+    let paragraph = Paragraph::new(lines)
+        .style(Style::default().bg(SURFACE))
         .alignment(Alignment::Center)
         .block(
             Block::default()

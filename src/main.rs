@@ -187,12 +187,10 @@ fn show_notification(alias_name: &str) -> Result<()> {
     loop {
         terminal.draw(|f| draw_notification(f, alias_name))?;
 
-        if event::poll(Duration::from_millis(1500))? {
+        if event::poll(Duration::from_millis(100))? {
             if let Event::Key(_) = event::read()? {
                 break;
             }
-        } else {
-            break;
         }
     }
 

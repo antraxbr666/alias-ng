@@ -1,6 +1,6 @@
 [package]
 name = "ang"
-version = "0.5.0"
+version = "0.5.1"
 edition = "2021"
 authors = ["antrax <antraxbr666>"]
 description = "Alias Next Generation - A modern alias browser"
@@ -17,7 +17,7 @@ crossterm = "0.28"
 dirs = "5"
 glob = "0.3"
 shellexpand = "3"
-arboard = "3.6"
+arboard = { version = "3.6", features = ["wayland-data-control"] }
 
 [profile.release]
 opt-level = 3
