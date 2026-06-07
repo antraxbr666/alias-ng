@@ -35,7 +35,10 @@ impl App {
                 .aliases
                 .iter()
                 .enumerate()
-                .filter(|(_, a)| a.command.to_lowercase().contains(&query))
+                .filter(|(_, a)| {
+                    a.name.to_lowercase().contains(&query)
+                        || a.command.to_lowercase().contains(&query)
+                })
                 .map(|(i, _)| i)
                 .collect();
         }
