@@ -31,10 +31,9 @@ _ang_widget() {
     rm -f "$tmpfile"
 
     if [[ -n "$selected" ]]; then
-        # Replace the entire current line with the selected alias
+        # Insert the selected alias into the current line without executing
         LBUFFER="$selected"
         RBUFFER=""
-        zle accept-line
     fi
 }
 
