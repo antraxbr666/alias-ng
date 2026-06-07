@@ -8,25 +8,37 @@ mod ui;
 
 use anyhow::Result;
 use app::{App, AppMode};
-use clap::{CommandFactory, Parser};
-use clap_complete::{generate, Shell};
+use clap::builder::styling;
+use clap::Parser;
 use crossterm::{
     event::{self, Event, KeyCode, KeyModifiers},
     terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
     ExecutableCommand,
 };
 use ratatui::prelude::*;
-use std::io::{self, stdout, BufWriter};
+use std::io::stdout;
 use std::path::PathBuf;
 use std::time::Duration;
 use ui::{draw, draw_notification};
 
 const VERSION: &str = env!("CARGO_PKG_VERSION");
 
+fn get_styles() -> clap::builder::Styles {
+    styling::Styles::styled()
+        .header(styling::AnsiColor::BrightMagenta.on_default().bold())
+        .usage(styling::AnsiColor::BrightMagenta.on_default().bold())
+        .literal(styling::AnsiColor::BrightGreen.on_default())
+        .placeholder(styling::AnsiColor::BrightYellow.on_default())
+        .error(styling::AnsiColor::BrightRed.on_default().bold())
+        .valid(styling::AnsiColor::BrightGreen.on_default())
+        .invalid(styling::AnsiColor::BrightRed.on_default())
+}
+
 #[derive(Parser, Debug)]
 #[command(name = "ang")]
-#[command(about = "Alias Next Generation — A modern alias browser")]
+#[command(about = format!("Alias Next Generation {} — A modern alias browser", VERSION))]
 #[command(version = VERSION)]
+#[command(styles = get_styles())]
 struct Cli {
     #[arg(value_name = "GROUP")]
     group: Option<String>,
@@ -36,25 +48,10 @@ struct Cli {
 
     #[arg(long)]
     print: bool,
-
-    #[arg(long = "generate-zsh-completion")]
-    generate_zsh_completion: bool,
 }
 
 fn main() -> Result<()> {
     let cli = Cli::parse();
-
-    if cli.generate_zsh_completion {
-        let mut cmd = Cli::command();
-        let bin_name = cmd.get_name().to_string();
-        generate(
-            Shell::Zsh,
-            &mut cmd,
-            bin_name,
-            &mut BufWriter::new(io::stdout().lock()),
-        );
-        return Ok(());
-    }
 
     if let Err(e) = clipboard::check_dependencies() {
         eprintln!("ang: clipboard error: {}", e);
