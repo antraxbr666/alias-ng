@@ -7,16 +7,16 @@
 
 <p align="center">A modern alias browser written in Rust 🦀</p>
 
-Browse, search, and select shell aliases interactively with a beautiful TUI. No external dependencies — everything is built-in.
+Browse, search, and select shell aliases interactively with a beautiful TUI. Selected alias is injected directly into your prompt.
 
 ---
 
 ## ✨ Features
 
-- 🔍 Fuzzy search through all shell aliases
+- 🔍 Search through all shell aliases
 - 📂 Automatic grouping by category (Docker, Git, System, etc.)
 - 🎯 Filter by group: `ang docker`
-- ⌨️ Inserts selected alias directly into the command line
+- ⌨️ Selected alias injected into current prompt
 - 🎨 Catppuccin Mocha theme
 - ⚡ Auto-detects all zsh aliases (plugins, frameworks, custom files)
 - 🔄 Runtime collection via `alias -L` with metadata enrichment
@@ -32,19 +32,7 @@ git clone https://github.com/antraxbr666/alias-ng.git
 cd alias-ng
 cargo build --release
 sudo cp target/release/ang /usr/local/bin/
-sudo mkdir -p /usr/local/share/ang
-sudo cp completions/ang.zsh /usr/local/share/ang/
 ```
-
-### Zsh integration
-
-Add to your `.zshrc`:
-
-```zsh
-source /usr/local/share/ang/ang.zsh
-```
-
-This enables the `ang` command to insert selected aliases into your current prompt.
 
 ---
 
@@ -57,6 +45,8 @@ ang              # Browse all aliases (auto-detected)
 ang docker       # Filter Docker aliases only
 ```
 
+After selecting an alias, it is injected into your current prompt. You can edit it or press Enter to execute.
+
 ### Non-interactive
 
 ```bash
@@ -64,7 +54,6 @@ ang --print              # Print all aliases as TSV
 ang --print docker       # Print Docker aliases as TSV
 ang --version            # Show version
 ang --help               # Show help
-ang --generate-zsh-completion  # Generate zsh completions
 ```
 
 ### ⌨️ TUI Keybindings
@@ -87,6 +76,7 @@ ang automatically discovers and collects all your zsh aliases:
 1. **Runtime Collection**: Executes `zsh -fc 'alias -L'` to get all loaded aliases (plugins, frameworks, custom)
 2. **File Discovery**: Scans `~/.zsh/*.zsh` for metadata (groups and descriptions)
 3. **Metadata Enrichment**: Merges groups and descriptions from static files into runtime aliases
+4. **Prompt Injection**: Uses TIOCSTI ioctl to inject selected alias into terminal input
 
 No configuration needed — ang finds everything automatically.
 

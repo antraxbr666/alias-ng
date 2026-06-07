@@ -3,6 +3,7 @@ mod collector;
 mod discovery;
 mod enricher;
 mod parser;
+mod terminal;
 mod ui;
 
 use anyhow::Result;
@@ -38,9 +39,6 @@ struct Cli {
 
     #[arg(long = "generate-zsh-completion")]
     generate_zsh_completion: bool,
-
-    #[arg(long = "output-file", value_name = "FILE")]
-    output_file: Option<PathBuf>,
 }
 
 fn main() -> Result<()> {
@@ -103,11 +101,7 @@ fn main() -> Result<()> {
     let selected = run_tui(aliases)?;
 
     if let Some(alias_name) = selected {
-        if let Some(output_path) = cli.output_file {
-            std::fs::write(&output_path, &alias_name)?;
-        } else {
-            println!("{}", alias_name);
-        }
+        terminal::inject_to_tty(&alias_name);
     }
 
     Ok(())
