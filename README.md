@@ -1,7 +1,7 @@
 <h1 align="center">⚡ Alias Next Generation — ang</h1>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/version-0.6.2-blue" alt="Version">
+  <img src="https://img.shields.io/badge/version-0.6.3-blue" alt="Version">
   <img src="https://img.shields.io/badge/license-MIT-green" alt="License">
   <img src="https://img.shields.io/badge/rust-1.71+-orange?logo=rust" alt="Rust">
   <img src="https://img.shields.io/badge/crates-deps-blue?logo=rust" alt="Crates">

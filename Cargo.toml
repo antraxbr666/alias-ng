@@ -1,6 +1,6 @@
 [package]
 name = "ang"
-version = "0.6.2"
+version = "0.6.3"
 edition = "2021"
 authors = ["antrax <antraxbr666>"]
 description = "Alias Next Generation - A modern alias browser"
